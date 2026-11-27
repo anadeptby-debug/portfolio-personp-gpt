@@ -21,7 +21,7 @@ const lead = profile.bio?.split('. ')[0];
     {lead && <p class="hero-description">{lead.endsWith('.') ? lead : lead + '.'}</p>}
     <div class="actions">
       {contact && <a class="button button-primary button-arrow" href={contact} data-telegram-contact>Обсудить проект</a>}
-      <a class="button button-secondary" href="/projects">Смотреть кейсы</a>
+      <a class="button button-secondary" href={catalogPath()}>Смотреть кейсы</a>
     </div>
     <ul class="hero-checks">{highlights.map((item) => <li>{item}</li>)}</ul>
   </section>
@@ -29,7 +29,7 @@ const lead = profile.bio?.split('. ')[0];
   <section class="section" aria-labelledby="home-projects">
     <div class="section-head">
       <h2 id="home-projects">Кейсы с цифрами</h2>
-      {selected.length > 0 && <a class="text-link" href="/projects">Все проекты</a>}
+      {selected.length > 0 && <a class="text-link" href={catalogPath()}>Все проекты</a>}
       <p>Реальные проекты, типовые сценарии и интерактивные демо, которые можно открыть прямо здесь.</p>
     </div>
     {selected.length

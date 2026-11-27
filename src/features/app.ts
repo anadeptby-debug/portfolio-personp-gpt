@@ -1,5 +1,5 @@
 import { navigate } from 'astro:transitions/client';
-import { catalogPath, categoryFromUrl, resolveStart, type ProjectRoute } from './portfolio/routes';
+import { catalogPath, categoryFromUrl, resolveStart, stripBase, type ProjectRoute } from './portfolio/routes';
 import { miniAppConfig, shareTarget, telegramShare } from './sharing/links';
 import {
   haptic, launchParameter, mountTelegram, openContact, readyTelegram, syncTelegramBack,
@@ -8,7 +8,7 @@ import {
 
 const configuredTelegram = miniAppConfig(import.meta.env.PUBLIC_TELEGRAM_BOT, import.meta.env.PUBLIC_TELEGRAM_APP);
 const siteOrigin = import.meta.env.PUBLIC_SITE_ORIGIN || location.origin;
-const pathname = (url: URL) => url.pathname.replace(/\/$/, '') || '/';
+const pathname = (url: URL) => stripBase(url.pathname.replace(/\/$/, '')) || '/';
 const isCase = (url: URL) => /^\/projects\/[^/]+$/.test(pathname(url));
 let incomingCatalog: string | undefined;
 let launchHandled = false;
@@ -86,7 +86,7 @@ function updateCaseBack() {
   const link = document.querySelector<HTMLAnchorElement>('[data-case-back]');
   if (!link) return;
   const target = returnTarget();
-  link.href = target ?? '/projects';
+  link.href = target ?? catalogPath();
   link.textContent = target?.includes('?') ? 'К подборке' : 'Все проекты';
 }
 
@@ -97,7 +97,7 @@ function telegramBack() {
     return;
   }
   if (returnTarget()) history.back();
-  else void navigate('/projects', { history: 'replace' });
+  else void navigate(catalogPath(), { history: 'replace' });
 }
 
 function initializeCaseVideos() {

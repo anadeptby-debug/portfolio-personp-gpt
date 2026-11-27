@@ -9,7 +9,7 @@ import { catalogPath, categories, type Category } from '../../features/portfolio
 const projects = await publishedProjects();
 const filters = Object.keys(categories) as Category[];
 ---
-<SiteLayout title="Проекты" description="Каталог опубликованных проектов и подборки по направлениям." page="projects" canonicalPath="/projects">
+<SiteLayout title="Проекты" description="Каталог опубликованных проектов и подборки по направлениям." page="projects" canonicalPath={catalogPath()}>
   <div class="page-heading">
     <h1>Проекты</h1>
     <p>Реальные проекты с цифрами до и после, типовые сценарии и интерактивные демо.</p>
@@ -31,7 +31,7 @@ const filters = Object.keys(categories) as Category[];
       <EmptyState title="Пока нет опубликованных проектов" />
     </div>
     <div data-empty-category hidden>
-      <EmptyState title="В этой категории пока нет проектов" href="/projects" linkLabel="Показать все проекты" />
+      <EmptyState title="В этой категории пока нет проектов" href={catalogPath()} linkLabel="Показать все проекты" />
     </div>
   </section>
 </SiteLayout>

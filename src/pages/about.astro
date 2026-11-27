@@ -4,6 +4,7 @@ import EmptyState from '../components/EmptyState.astro';
 import { profile } from '../features/portfolio/data';
 import { principles, stages } from '../features/portfolio/company';
 import { telegramContact } from '../features/sharing/links';
+import { catalogPath, withBase } from '../features/portfolio/routes';
 
 const telegram = telegramContact(profile.telegramUsername);
 const hasProfile = profile.displayName || profile.avatar || profile.bio || profile.headline || profile.competencies.length;
@@ -16,7 +17,7 @@ const hasContacts = telegram || profile.githubUrl || profile.email;
   </div>
   {hasProfile
     ? <section class="profile-panel" aria-label="Профиль">
-        {profile.avatar && <img class="profile-avatar" src={profile.avatar} alt={profile.displayName ?? 'Логотип'} width="96" height="96" />}
+        {profile.avatar && <img class="profile-avatar" src={withBase(profile.avatar)} alt={profile.displayName ?? 'Логотип'} width="96" height="96" />}
         {profile.availability === 'available' && <p class="availability"><span></span>Берём новые проекты</p>}
         {profile.headline && <p class="lead">{profile.headline}</p>}
         {profile.bio && <p class="long-copy">{profile.bio}</p>}
@@ -24,7 +25,7 @@ const hasContacts = telegram || profile.githubUrl || profile.email;
           {profile.competencies.map((skill) => <li>{skill}</li>)}
         </ul>}
       </section>
-    : <EmptyState title="Профиль пока не заполнен" href="/projects" linkLabel="Смотреть проекты" />}
+    : <EmptyState title="Профиль пока не заполнен" href={catalogPath()} linkLabel="Смотреть проекты" />}
 
   <section class="section" aria-labelledby="about-principles">
     <div class="section-head"><h2 id="about-principles">Наши принципы</h2></div>

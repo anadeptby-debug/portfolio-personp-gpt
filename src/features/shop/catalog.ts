@@ -1,4 +1,6 @@
-export const shopPath = '/demo/shop';
+import { withBase } from '../portfolio/routes';
+
+export const shopPath = withBase('/demo/shop');
 export const cartPath = shopPath + '/cart';
 
 export const departments = {

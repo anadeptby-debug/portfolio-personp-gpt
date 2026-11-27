@@ -5,6 +5,7 @@ import '@fontsource-variable/onest';
 import '../styles/global.css';
 import { profile } from '../features/portfolio/data';
 import { telegramContact } from '../features/sharing/links';
+import { catalogPath, withBase } from '../features/portfolio/routes';
 
 interface Props {
   title: string;
@@ -19,15 +20,15 @@ const { title, description, page, canonicalPath, previewImage, noindex } = Astro
 const brandName = profile.displayName ?? 'Anadept';
 const siteName = brandName + ' · кейсы';
 const documentTitle = page === 'home' ? title : title + ' | ' + siteName;
-const path = canonicalPath ?? (Astro.url.pathname.replace(/\/$/, '') || '/');
+const path = canonicalPath ?? (Astro.url.pathname.replace(/\/$/, '') || withBase('/'));
 const canonical = Astro.site ? new URL(path, Astro.site).href : undefined;
-const openGraphImage = previewImage ?? { src: '/portfolio-preview.png', alt: brandName + ' — автоматизация и ИИ для бизнеса' };
+const openGraphImage = previewImage ?? { src: withBase('/portfolio-preview.png'), alt: brandName + ' — автоматизация и ИИ для бизнеса' };
 const imageUrl = Astro.site ? new URL(openGraphImage.src, Astro.site).href : undefined;
 const contact = telegramContact(profile.telegramUsername);
 const navigation = [
-  { key: 'home', href: '/', label: 'Главная' },
-  { key: 'projects', href: '/projects', label: 'Проекты' },
-  { key: 'about', href: '/about', label: 'О нас' },
+  { key: 'home', href: withBase('/'), label: 'Главная' },
+  { key: 'projects', href: catalogPath(), label: 'Проекты' },
+  { key: 'about', href: withBase('/about'), label: 'О нас' },
 ] as const;
 ---
 <!doctype html>
@@ -38,8 +39,8 @@ const navigation = [
     <title>{documentTitle}</title>
     <meta name="description" content={description} />
     <meta name="color-scheme" content="dark light" />
-    <link rel="icon" href="/portfolio-icon.png" type="image/png" />
-    <link rel="apple-touch-icon" href="/portfolio-icon.png" />
+    <link rel="icon" href={withBase('/portfolio-icon.png')} type="image/png" />
+    <link rel="apple-touch-icon" href={withBase('/portfolio-icon.png')} />
     <meta name="theme-color" content="#121722" />
     {noindex && <meta name="robots" content="noindex" />}
     {canonical && <link rel="canonical" href={canonical} />}
@@ -60,9 +61,9 @@ const navigation = [
     <a class="skip-link" href="#main-content">К содержанию</a>
     <header class="site-header">
       <div class="container header-inner">
-        <a class="brand" href="/" aria-label={brandName + ' — на главную'}>
-          <img class="brand-logo brand-logo-dark" src="/brand/logo-dark.png" alt="" width="117" height="24" />
-          <img class="brand-logo brand-logo-light" src="/brand/logo-light.png" alt="" width="117" height="24" />
+        <a class="brand" href={withBase('/')} aria-label={brandName + ' — на главную'}>
+          <img class="brand-logo brand-logo-dark" src={withBase('/brand/logo-dark.png')} alt="" width="117" height="24" />
+          <img class="brand-logo brand-logo-light" src={withBase('/brand/logo-light.png')} alt="" width="117" height="24" />
         </a>
         <nav class="site-nav" aria-label="Основная навигация">
           {navigation.map(({ key, href, label }) => (

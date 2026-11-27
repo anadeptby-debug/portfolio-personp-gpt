@@ -4,8 +4,13 @@ import { miniAppConfig } from './src/features/sharing/links.ts';
 
 const fixtures = process.env.PORTFOLIO_TEST_FIXTURES === '1';
 const mode = process.env.NODE_ENV === 'production' ? 'production' : 'development';
-const env = loadEnv(mode, process.cwd(), 'PUBLIC_');
+const env = loadEnv(mode, process.cwd(), ['PUBLIC_', 'BASE_PATH']);
 const site = env.PUBLIC_SITE_ORIGIN || undefined;
+// Подпапка для GitHub Pages, например /portfolio-personp-gpt. Пусто — сайт в корне домена.
+const base = env.BASE_PATH && env.BASE_PATH !== '/' ? '/' + env.BASE_PATH.replace(/^\/+|\/+$/g, '') : undefined;
+if (base && !/^\/[A-Za-z0-9._-]+(?:\/[A-Za-z0-9._-]+)*$/.test(base)) {
+  throw new Error('BASE_PATH должен быть путём вида /portfolio-personp-gpt.');
+}
 const { PUBLIC_TELEGRAM_BOT: bot, PUBLIC_TELEGRAM_APP: app } = env;
 
 if ((bot || app) && !miniAppConfig(bot, app)) {
@@ -23,6 +28,7 @@ if (site) {
 
 export default defineConfig({
   site,
+  base,
   outDir: fixtures ? './dist-fixtures' : './dist',
   cacheDir: fixtures ? './node_modules/.cache/astro-fixtures' : './node_modules/.cache/astro',
   devToolbar: { enabled: false },

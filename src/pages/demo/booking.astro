@@ -2,6 +2,7 @@
 import '@fontsource-variable/wix-madefor-display';
 import '../../styles/booking.css';
 import { services } from '../../features/booking/model';
+import { projectPath, withBase } from '../../features/portfolio/routes';
 ---
 <!doctype html>
 <html lang="ru">
@@ -11,7 +12,7 @@ import { services } from '../../features/booking/model';
     <meta name="robots" content="noindex" />
     <meta name="description" content="Демонстрация онлайн-записи в веломастерскую." />
     <title>Запись в веломастерскую · Демо</title>
-    <link rel="icon" href="/portfolio-icon.png" type="image/png" />
+    <link rel="icon" href={withBase('/portfolio-icon.png')} type="image/png" />
   </head>
   <body>
     <a class="skip" href="#content">К содержанию</a>
@@ -95,11 +96,12 @@ import { services } from '../../features/booking/model';
         <p class="panel-status" data-panel-status role="status"></p>
       </section>
     </main>
-    <footer class="frame footer"><a href="/projects/online_booking">К кейсу портфолио</a></footer>
+    <footer class="frame footer"><a href={projectPath('online_booking')}>К кейсу портфолио</a></footer>
     <script>
       import '../../features/booking/client';
       import { startDemoInTelegram } from '../../features/telegram/demo';
-      startDemoInTelegram('/projects/online_booking');
+      import { projectPath } from '../../features/portfolio/routes';
+      startDemoInTelegram(projectPath('online_booking'));
     </script>
   </body>
 </html>

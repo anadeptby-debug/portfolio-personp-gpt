@@ -2,6 +2,7 @@
 import '@fontsource-variable/wix-madefor-display';
 import '../styles/shop.css';
 import { shopPath, cartPath } from '../features/shop/catalog';
+import { projectPath } from '../features/portfolio/routes';
 
 interface Props {
   title: string;
@@ -36,7 +37,7 @@ const { title, description, current } = Astro.props;
     <footer class="shop-footer">
       <div class="shell bar">
         <p>Демо-магазин. Цены и товары иллюстративные.</p>
-        <a href="/projects/desk_shop">К кейсу портфолио</a>
+        <a href={projectPath('desk_shop')}>К кейсу портфолио</a>
       </div>
     </footer>
     <div class="sr-only" role="status" aria-live="polite" data-shop-announce></div>
@@ -44,7 +45,8 @@ const { title, description, current } = Astro.props;
     <script>
       import '../features/shop/client';
       import { startDemoInTelegram } from '../features/telegram/demo';
-      startDemoInTelegram('/projects/desk_shop');
+      import { projectPath } from '../features/portfolio/routes';
+      startDemoInTelegram(projectPath('desk_shop'));
     </script>
   </body>
 </html>

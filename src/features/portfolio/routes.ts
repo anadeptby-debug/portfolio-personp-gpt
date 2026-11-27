@@ -15,6 +15,24 @@ export const projectKinds = {
 } as const;
 
 export type Category = keyof typeof categories;
+
+/**
+ * Подпапка сайта, например `/portfolio-personp-gpt` на GitHub Pages.
+ * Пустая строка, когда сайт открыт из корня домена. Задаётся переменной BASE_PATH при сборке.
+ */
+export const basePath = (import.meta.env?.BASE_URL ?? '/').replace(/\/+$/, '');
+
+/** Добавляет подпапку к внутреннему пути, начинающемуся с `/`. Внешние ссылки не меняет. */
+export function withBase(path: string) {
+  return path.startsWith('/') && !path.startsWith('//') ? basePath + path : path;
+}
+
+/** Убирает подпапку из pathname, чтобы сравнивать маршруты как `/projects`. */
+export function stripBase(pathname: string) {
+  if (!basePath) return pathname;
+  if (pathname === basePath) return '/';
+  return pathname.startsWith(basePath + '/') ? pathname.slice(basePath.length) : pathname;
+}
 export const slugPattern = /^[a-z0-9]+(?:_[a-z0-9]+)*$/;
 export const videoAssetPattern = /^[a-z0-9_-]+\.(?:mp4|webm)$/;
 const maxSlug = 64;
@@ -33,21 +51,21 @@ export function categoryFromUrl(url: URL): Category | undefined {
 }
 
 export function projectPath(slug: string) {
-  return '/projects/' + encodeURIComponent(slug);
+  return withBase('/projects/' + encodeURIComponent(slug));
 }
 
 export function projectVideoPath(slug: string, file: string) {
-  return '/project-media/' + encodeURIComponent(slug) + '/' + encodeURIComponent(file);
+  return withBase('/project-media/' + encodeURIComponent(slug) + '/' + encodeURIComponent(file));
 }
 
 export function catalogPath(category?: Category) {
-  return category ? '/projects?category=' + category : '/projects';
+  return withBase(category ? '/projects?category=' + category : '/projects');
 }
 
 export type ProjectRoute = { slug: string; aliases: readonly string[] };
 
 export function resolveStart(start: string | undefined, projects: readonly ProjectRoute[]) {
-  if (!start) return '/';
+  if (!start) return withBase('/');
   if (start.startsWith('cat_')) {
     const category = start.slice(4);
     if (isCategory(category)) return catalogPath(category);
@@ -59,5 +77,5 @@ export function resolveStart(start: string | undefined, projects: readonly Proje
       if (project) return projectPath(project.slug);
     }
   }
-  return '/projects?status=unavailable';
+  return withBase('/projects?status=unavailable');
 }
