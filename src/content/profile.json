@@ -1,11 +1,11 @@
 {
-  "displayName": null,
-  "headline": null,
-  "bio": null,
+  "displayName": "Anadept",
+  "headline": "Автоматизация и ИИ для вашего бизнеса",
+  "bio": "Внедряем ИИ-агентов, интегрируем CRM и ERP, разрабатываем внутренние системы и автоматизируем рутинные задачи. Команда инженеров, которая пришла во внедрение ИИ из автоматизации реального производства и учётных систем: берём процесс, считаем его стоимость и отвечаем за результат.",
   "avatar": null,
-  "availability": "hidden",
-  "telegramUsername": null,
+  "availability": "available",
+  "telegramUsername": "anadept",
   "githubUrl": null,
-  "email": null,
-  "competencies": []
+  "email": "hello@anadept.by",
+  "competencies": ["1С: УПП, ERP, ЗУП", "Битрикс24 и CRM", "ИИ-агенты и LLM", "Telegram-боты и Mini Apps", "Интеграции и API", "Отчёты и дашборды"]
 }

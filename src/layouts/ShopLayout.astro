@@ -1,5 +1,5 @@
 ---
-import '@fontsource-variable/inter';
+import '@fontsource-variable/wix-madefor-display';
 import '../styles/shop.css';
 import { shopPath, cartPath } from '../features/shop/catalog';
 
@@ -43,6 +43,8 @@ const { title, description, current } = Astro.props;
     <p class="shop-feedback" data-shop-feedback aria-hidden="true" hidden></p>
     <script>
       import '../features/shop/client';
+      import { startDemoInTelegram } from '../features/telegram/demo';
+      startDemoInTelegram('/projects/desk_shop');
     </script>
   </body>
 </html>

@@ -33,7 +33,8 @@ const projects = defineCollection({
       aliases: z.array(slug).default([]),
       title: text(110),
       summary: text(200),
-      kind: z.enum(['commercial', 'personal', 'demo']),
+      kind: z.enum(['commercial', 'personal', 'demo', 'scenario']),
+      context: text(200).optional(),
       status: z.enum(['draft', 'published']).default('draft'),
       categories: z.array(z.string().refine(isCategory)).min(1).max(6),
       tags: z.array(text(30)).min(2).max(4),
@@ -52,6 +53,8 @@ const projects = defineCollection({
       demoUrl: z.union([https, z.string().regex(/^\/demo\/[a-z0-9]+(?:-[a-z0-9]+)*$/)]).optional(),
       repositoryUrl: https.optional(),
       results: z.array(z.object({ label: text(100), value: text(100), evidenceNote: text(500) })).default([]),
+      comparison: z.array(z.object({ label: text(100), before: text(120), after: text(120) })).max(8).default([]),
+      fit: text(600).optional(),
     });
   },
 });

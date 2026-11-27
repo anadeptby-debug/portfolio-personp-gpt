@@ -2,8 +2,8 @@ import { navigate } from 'astro:transitions/client';
 import { catalogPath, categoryFromUrl, resolveStart, type ProjectRoute } from './portfolio/routes';
 import { miniAppConfig, shareTarget, telegramShare } from './sharing/links';
 import {
-  launchParameter, mountTelegram, openContact, readyTelegram, syncTelegramBack,
-  syncTelegramLayout, telegramMounted,
+  haptic, launchParameter, mountTelegram, openContact, readyTelegram, syncTelegramBack,
+  syncTelegramLayout, syncTelegramMainButton, telegramMounted,
 } from './telegram/adapter';
 
 const configuredTelegram = miniAppConfig(import.meta.env.PUBLIC_TELEGRAM_BOT, import.meta.env.PUBLIC_TELEGRAM_APP);
@@ -33,6 +33,7 @@ function updateCatalog() {
     if (filter.dataset.category === (category ?? '')) filter.setAttribute('aria-current', 'true');
     else filter.removeAttribute('aria-current');
   }
+  revealActiveFilter(catalog);
   const cards = Array.from(catalog.querySelectorAll<HTMLElement>('[data-project-card]'));
   for (const card of cards) {
     card.hidden = !!category && !card.dataset.categories?.split(' ').includes(category);
@@ -53,6 +54,15 @@ function updateCatalog() {
     share.hidden = !category;
     share.dataset.value = category ?? '';
   }
+}
+
+/** На телефоне фильтры — горизонтальная лента: прокручиваем её к выбранному. */
+function revealActiveFilter(catalog: HTMLElement) {
+  const active = catalog.querySelector<HTMLElement>('[data-category][aria-current]');
+  const strip = active?.closest<HTMLElement>('ul');
+  if (!active || !strip || strip.scrollWidth <= strip.clientWidth) return;
+  const offset = active.getBoundingClientRect().left - strip.getBoundingClientRect().left;
+  strip.scrollLeft += offset - parseFloat(getComputedStyle(strip).paddingInlineStart || '0');
 }
 
 function updateShare() {
@@ -100,6 +110,20 @@ function initializeCaseVideos() {
   }
 }
 
+function updateMainButton() {
+  const page = document.body.dataset.page;
+  const contact = document.querySelector<HTMLAnchorElement>('a[data-telegram-contact]');
+  if (!contact || page === 'telegram' || page === 'alias') {
+    syncTelegramMainButton(undefined);
+    return;
+  }
+  const href = contact.href;
+  syncTelegramMainButton(page === 'case' ? 'Обсудить похожий проект' : 'Обсудить проект', () => {
+    haptic('impact');
+    if (!openContact(href)) location.href = href;
+  });
+}
+
 async function onPage() {
   initializeCaseVideos();
   const launch = document.querySelector<HTMLElement>('[data-telegram-launch]');
@@ -111,6 +135,7 @@ async function onPage() {
   }
   syncTelegramLayout();
   syncTelegramBack(document.body.dataset.page === 'case');
+  updateMainButton();
   updateCatalog();
   updateShare();
   updateCaseBack();
@@ -185,6 +210,10 @@ function openGallery(link: HTMLAnchorElement) {
 document.addEventListener('click', (event) => {
   if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
   if (!(event.target instanceof Element)) return;
+  if (telegramMounted()) {
+    if (event.target.closest('.filters a')) haptic('selection');
+    else if (event.target.closest('.button, .card-link, .service-link, .site-nav a')) haptic('impact');
+  }
   const copy = event.target.closest<HTMLButtonElement>('button[data-copy]');
   if (copy) void copyLink(copy);
   const contact = event.target.closest<HTMLAnchorElement>('a[data-telegram-contact]');

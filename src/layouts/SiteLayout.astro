@@ -1,6 +1,7 @@
 ---
 import { ClientRouter } from 'astro:transitions';
-import '@fontsource-variable/inter';
+import '@fontsource-variable/wix-madefor-display';
+import '@fontsource-variable/onest';
 import '../styles/global.css';
 import { profile } from '../features/portfolio/data';
 import { telegramContact } from '../features/sharing/links';
@@ -15,17 +16,18 @@ interface Props {
 }
 
 const { title, description, page, canonicalPath, previewImage, noindex } = Astro.props;
-const siteName = profile.displayName ? 'Портфолио · ' + profile.displayName : 'Портфолио';
+const brandName = profile.displayName ?? 'Anadept';
+const siteName = brandName + ' · кейсы';
 const documentTitle = page === 'home' ? title : title + ' | ' + siteName;
 const path = canonicalPath ?? (Astro.url.pathname.replace(/\/$/, '') || '/');
 const canonical = Astro.site ? new URL(path, Astro.site).href : undefined;
-const openGraphImage = previewImage ?? { src: '/portfolio-preview.png', alt: 'Портфолио IT-специалиста' };
+const openGraphImage = previewImage ?? { src: '/portfolio-preview.png', alt: brandName + ' — автоматизация и ИИ для бизнеса' };
 const imageUrl = Astro.site ? new URL(openGraphImage.src, Astro.site).href : undefined;
 const contact = telegramContact(profile.telegramUsername);
 const navigation = [
   { key: 'home', href: '/', label: 'Главная' },
   { key: 'projects', href: '/projects', label: 'Проекты' },
-  { key: 'about', href: '/about', label: 'Обо мне' },
+  { key: 'about', href: '/about', label: 'О нас' },
 ] as const;
 ---
 <!doctype html>
@@ -37,6 +39,8 @@ const navigation = [
     <meta name="description" content={description} />
     <meta name="color-scheme" content="dark light" />
     <link rel="icon" href="/portfolio-icon.png" type="image/png" />
+    <link rel="apple-touch-icon" href="/portfolio-icon.png" />
+    <meta name="theme-color" content="#121722" />
     {noindex && <meta name="robots" content="noindex" />}
     {canonical && <link rel="canonical" href={canonical} />}
     {!noindex && <>
@@ -56,19 +60,19 @@ const navigation = [
     <a class="skip-link" href="#main-content">К содержанию</a>
     <header class="site-header">
       <div class="container header-inner">
-        <a class="brand" href="/">
-          <span class="brand-mark" aria-hidden="true"></span>
-          <span>{profile.displayName ?? 'Портфолио'}</span>
+        <a class="brand" href="/" aria-label={brandName + ' — на главную'}>
+          <img class="brand-logo brand-logo-dark" src="/brand/logo-dark.png" alt="" width="117" height="24" />
+          <img class="brand-logo brand-logo-light" src="/brand/logo-light.png" alt="" width="117" height="24" />
         </a>
         <nav class="site-nav" aria-label="Основная навигация">
           {navigation.map(({ key, href, label }) => (
             <a href={href} aria-current={page === key ? 'page' : page === 'case' && key === 'projects' ? 'location' : undefined}>
-              <span class:list={['nav-icon', 'nav-icon-' + key]} aria-hidden="true"></span>
+              <span class="nav-icon-wrap" aria-hidden="true"><span class:list={['nav-icon', 'nav-icon-' + key]}></span></span>
               {label}
             </a>
           ))}
         </nav>
-        {contact && <a class="button button-small header-contact" href={contact} data-telegram-contact>Написать в Telegram</a>}
+        {contact && <a class="button button-small button-dark header-contact" href={contact} data-telegram-contact>Обсудить проект</a>}
       </div>
     </header>
     <main class="container site-main" id="main-content" tabindex="-1">
@@ -76,8 +80,11 @@ const navigation = [
     </main>
     {contact && <footer class="site-footer">
       <div class="container footer-inner">
-        <span>{siteName}</span>
-        <a href={contact} data-telegram-contact>Telegram</a>
+        <span>© {brandName}</span>
+        <span class="footer-links">
+          <a href={contact} data-telegram-contact>Telegram</a>
+          {profile.email && <a href={'mailto:' + profile.email}>{profile.email}</a>}
+        </span>
       </div>
     </footer>}
     <script>

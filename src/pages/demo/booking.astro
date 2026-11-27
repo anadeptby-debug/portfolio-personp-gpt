@@ -1,5 +1,5 @@
 ---
-import '@fontsource-variable/inter';
+import '@fontsource-variable/wix-madefor-display';
 import '../../styles/booking.css';
 import { services } from '../../features/booking/model';
 ---
@@ -98,6 +98,8 @@ import { services } from '../../features/booking/model';
     <footer class="frame footer"><a href="/projects/online_booking">К кейсу портфолио</a></footer>
     <script>
       import '../../features/booking/client';
+      import { startDemoInTelegram } from '../../features/telegram/demo';
+      startDemoInTelegram('/projects/online_booking');
     </script>
   </body>
 </html>

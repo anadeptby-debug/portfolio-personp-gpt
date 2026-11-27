@@ -2,32 +2,57 @@
 import SiteLayout from '../layouts/SiteLayout.astro';
 import EmptyState from '../components/EmptyState.astro';
 import { profile } from '../features/portfolio/data';
+import { principles, stages } from '../features/portfolio/company';
 import { telegramContact } from '../features/sharing/links';
 
 const telegram = telegramContact(profile.telegramUsername);
 const hasProfile = profile.displayName || profile.avatar || profile.bio || profile.headline || profile.competencies.length;
 const hasContacts = telegram || profile.githubUrl || profile.email;
 ---
-<SiteLayout title="Обо мне" description={profile.bio ?? 'Профиль и контакты IT-специалиста.'} page="about">
-  <div class="page-heading"><h1>Обо мне</h1></div>
+<SiteLayout title="О нас" description={profile.bio ?? 'Команда, подход и контакты.'} page="about">
+  <div class="page-heading">
+    <h1>О нас</h1>
+    <p>Не продаём «ИИ ради ИИ»: берём процесс, считаем его стоимость и отвечаем за результат.</p>
+  </div>
   {hasProfile
     ? <section class="profile-panel" aria-label="Профиль">
-        {profile.avatar && <img class="profile-avatar" src={profile.avatar} alt={profile.displayName ?? 'Фото профиля'} width="96" height="96" />}
-        {profile.displayName && <h2>{profile.displayName}</h2>}
+        {profile.avatar && <img class="profile-avatar" src={profile.avatar} alt={profile.displayName ?? 'Логотип'} width="96" height="96" />}
+        {profile.availability === 'available' && <p class="availability"><span></span>Берём новые проекты</p>}
         {profile.headline && <p class="lead">{profile.headline}</p>}
-        {profile.availability === 'available' && <p class="availability"><span></span>Открыт к проектам</p>}
         {profile.bio && <p class="long-copy">{profile.bio}</p>}
         {profile.competencies.length > 0 && <ul class="tags" aria-label="Компетенции">
           {profile.competencies.map((skill) => <li>{skill}</li>)}
         </ul>}
       </section>
     : <EmptyState title="Профиль пока не заполнен" href="/projects" linkLabel="Смотреть проекты" />}
+
+  <section class="section" aria-labelledby="about-principles">
+    <div class="section-head"><h2 id="about-principles">Наши принципы</h2></div>
+    <ol class="steps steps-3">
+      {principles.map((item) => <li><h3>{item.title}</h3><p>{item.text}</p></li>)}
+    </ol>
+  </section>
+
+  <section class="section" aria-labelledby="about-stages">
+    <div class="section-head">
+      <h2 id="about-stages">Как мы работаем</h2>
+      <p>Каждый этап — отдельный договор и оплата. После любого можно остановиться.</p>
+    </div>
+    <ol class="steps">
+      {stages.map((stage) => <li>
+        <span class="step-term">{stage.term}</span>
+        <h3>{stage.title}</h3>
+        <p>{stage.text}</p>
+      </li>)}
+    </ol>
+  </section>
+
   {hasContacts && <section class="section" aria-labelledby="about-contacts">
     <div class="section-head"><h2 id="about-contacts">Контакты</h2></div>
-    <div class="actions">
+    <div class="contact-list">
       {telegram && <a class="button button-primary" href={telegram} data-telegram-contact>Написать в Telegram</a>}
+      {profile.email && <a class="button button-secondary" href={'mailto:' + profile.email}>{profile.email}</a>}
       {profile.githubUrl && <a class="button button-secondary" href={profile.githubUrl}>GitHub</a>}
-      {profile.email && <a class="button button-secondary" href={'mailto:' + profile.email}>Электронная почта</a>}
     </div>
   </section>}
 </SiteLayout>

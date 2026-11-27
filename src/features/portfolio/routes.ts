@@ -8,9 +8,10 @@ export const categories = {
 } as const;
 
 export const projectKinds = {
-  commercial: 'Коммерческий проект',
+  commercial: 'Реальный проект',
   personal: 'Личный проект',
-  demo: 'Демонстрационный проект',
+  demo: 'Интерактивное демо',
+  scenario: 'Типовой сценарий',
 } as const;
 
 export type Category = keyof typeof categories;

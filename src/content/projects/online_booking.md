@@ -4,11 +4,12 @@ slug: online_booking
 title: 'Онлайн-запись в веломастерскую'
 summary: 'Демонстрационный сервис записи на обслуживание. Клиент выбирает услугу и время, а мастер видит запись и историю событий в панели.'
 kind: demo
+context: 'Сервисный бизнес · запись через Telegram Mini App · работает в браузере'
 status: published
 categories: [bots, automation, web]
 tags: ['Бронирование', 'Telegram Mini Apps', 'Панель записей']
 featured: true
-sortOrder: 10
+sortOrder: 70
 problem: >-
   Если запись ведётся в переписке, клиенту нужно уточнять свободное время, а
   мастер вручную сверяет его с расписанием. Услуги занимают разное время, поэтому
@@ -40,4 +41,5 @@ video:
   orientation: portrait
   poster: '../../assets/projects/online_booking/mobile-confirmation.png'
 demoUrl: '/demo/booking'
+fit: 'Салонам, мастерским, клиникам и студиям, которые принимают записи в переписке и хотят, чтобы клиент сам выбирал свободное время прямо в Telegram.'
 ---

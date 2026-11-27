@@ -15,7 +15,7 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 [hidden] { display: none !important; }
-body { min-block-size: 100vh; margin: 0; display: flex; flex-direction: column; background: var(--paper); color: var(--text); font: 400 1rem/1.55 "Inter Variable", "Segoe UI", system-ui, sans-serif; }
+body { min-block-size: 100vh; margin: 0; display: flex; flex-direction: column; background: var(--paper); color: var(--text); font: 400 1rem/1.55 "Wix Madefor Display Variable", "Segoe UI", system-ui, sans-serif; }
 h1, h2, h3, p, dl, dd, ul { margin: 0; }
 h1, h2, h3 { overflow-wrap: anywhere; }
 a { color: inherit; }

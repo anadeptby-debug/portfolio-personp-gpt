@@ -6,7 +6,7 @@ interface Props {
 const { kind, value } = Astro.props;
 ---
 <details class="share" data-share data-kind={kind} data-value={value} hidden={kind === 'category'}>
-  <summary class="button button-secondary">
+  <summary class="button button-secondary button-small">
     <span class="share-icon" aria-hidden="true"></span>
     Поделиться
   </summary>

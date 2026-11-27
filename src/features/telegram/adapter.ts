@@ -7,6 +7,19 @@ type TelegramBack = {
   onClick(handler: () => void): void;
 };
 
+type TelegramMainButton = {
+  setText(text: string): void;
+  show(): void;
+  hide(): void;
+  onClick(handler: () => void): void;
+  setParams?(params: { color?: string; text_color?: string; is_visible?: boolean }): void;
+};
+
+type TelegramHaptics = {
+  impactOccurred(style: 'light' | 'medium' | 'heavy' | 'rigid' | 'soft'): void;
+  selectionChanged(): void;
+};
+
 type TelegramWebApp = {
   platform?: string;
   version?: string;
@@ -16,6 +29,12 @@ type TelegramWebApp = {
   safeAreaInset?: Insets;
   contentSafeAreaInset?: Insets;
   BackButton?: TelegramBack;
+  MainButton?: TelegramMainButton;
+  HapticFeedback?: TelegramHaptics;
+  expand?(): void;
+  setHeaderColor?(color: string): void;
+  setBackgroundColor?(color: string): void;
+  setBottomBarColor?(color: string): void;
   onEvent?(event: TelegramEvent, handler: () => void): void;
   ready?(): void;
   isVersionAtLeast?(version: string): boolean;
@@ -33,6 +52,7 @@ const sessionKey = 'portfolio:telegram';
 let app: TelegramWebApp | undefined;
 let mounted: Promise<void> | undefined;
 let navigateBack: () => void = () => {};
+let mainAction: (() => void) | undefined;
 let readyRequested = false;
 let readySent = false;
 
@@ -73,6 +93,7 @@ export function syncTelegramLayout() {
   if (app.colorScheme === 'light' || app.colorScheme === 'dark') {
     root.dataset.theme = app.colorScheme;
   }
+  applyChromeColors();
   const height = app.viewportStableHeight;
   if (typeof height === 'number' && height > 0) root.style.setProperty('--portfolio-stable-height', height + 'px');
   if (supports('8.0')) {
@@ -97,6 +118,8 @@ function attachBridge() {
     app.onEvent?.('contentSafeAreaChanged', syncTelegramLayout);
   }
   if (supports('6.1')) app.BackButton?.onClick(() => navigateBack());
+  app.MainButton?.onClick(() => mainAction?.());
+  try { app.expand?.(); } catch { /* Older clients may not support expand. */ }
   syncTelegramLayout();
   syncTelegramBack(document.body.dataset.page === 'case');
   if (readyRequested) readyTelegram();
@@ -144,4 +167,45 @@ export function openContact(url: string) {
   } catch {
     return false;
   }
+}
+
+function applyChromeColors() {
+  if (!app) return;
+  const background = getComputedStyle(document.body).backgroundColor;
+  const hex = toHex(background);
+  if (!hex) return;
+  try {
+    if (supports('6.1')) app.setBackgroundColor?.(hex);
+    if (supports('6.9')) app.setHeaderColor?.(hex);
+    else if (supports('6.1')) app.setHeaderColor?.('bg_color');
+    if (supports('7.10')) app.setBottomBarColor?.(hex);
+  } catch { /* Colors are cosmetic. */ }
+}
+
+function toHex(color: string) {
+  const match = color.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)/);
+  if (!match) return;
+  return '#' + match.slice(1, 4).map((part) => Number(part).toString(16).padStart(2, '0')).join('');
+}
+
+/** Нативная кнопка внизу экрана Telegram. `undefined` скрывает её. */
+export function syncTelegramMainButton(text: string | undefined, action?: () => void) {
+  const button = app?.MainButton;
+  if (!button) return;
+  mainAction = action;
+  if (!text) {
+    button.hide();
+    return;
+  }
+  button.setText(text);
+  button.setParams?.({ color: '#ff9b7d', text_color: '#121722' });
+  button.show();
+}
+
+export function haptic(kind: 'selection' | 'impact') {
+  if (!supports('6.1') || !app?.HapticFeedback) return;
+  try {
+    if (kind === 'selection') app.HapticFeedback.selectionChanged();
+    else app.HapticFeedback.impactOccurred('light');
+  } catch { /* Haptics are optional. */ }
 }

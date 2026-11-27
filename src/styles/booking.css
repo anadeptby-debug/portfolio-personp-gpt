@@ -34,7 +34,7 @@
 
 *, *::before, *::after { box-sizing: border-box; }
 [hidden] { display: none !important; }
-body { margin: 0; background: var(--paper); color: var(--text); font: 400 1rem/1.5 "Inter Variable", "Segoe UI", system-ui, sans-serif; }
+body { margin: 0; background: var(--paper); color: var(--text); font: 400 1rem/1.5 "Wix Madefor Display Variable", "Segoe UI", system-ui, sans-serif; }
 button { font: inherit; color: inherit; }
 button:not(:disabled) { cursor: pointer; }
 h1, h2, h3, p, ul, dl, dd { margin: 0; }
