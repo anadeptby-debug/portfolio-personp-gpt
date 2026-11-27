@@ -32,6 +32,7 @@ const projects = defineCollection({
       slug,
       aliases: z.array(slug).default([]),
       title: text(110),
+      shortTitle: text(60).optional(),
       summary: text(200),
       kind: z.enum(['commercial', 'personal', 'demo', 'scenario']),
       context: text(200).optional(),

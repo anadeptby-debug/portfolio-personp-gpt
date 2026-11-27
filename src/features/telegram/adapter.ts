@@ -117,7 +117,10 @@ function attachBridge() {
     app.onEvent?.('safeAreaChanged', syncTelegramLayout);
     app.onEvent?.('contentSafeAreaChanged', syncTelegramLayout);
   }
-  if (supports('6.1')) app.BackButton?.onClick(() => navigateBack());
+  if (supports('6.1') && app.BackButton) {
+    app.BackButton.onClick(() => navigateBack());
+    document.documentElement.dataset.tgBack = '';
+  }
   app.MainButton?.onClick(() => mainAction?.());
   try { app.expand?.(); } catch { /* Older clients may not support expand. */ }
   syncTelegramLayout();

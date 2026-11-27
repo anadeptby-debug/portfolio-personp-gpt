@@ -1,80 +1,78 @@
 ---
+import { Image } from 'astro:assets';
 import SiteLayout from '../layouts/SiteLayout.astro';
 import EmptyState from '../components/EmptyState.astro';
 import ProjectCard from '../components/ProjectCard.astro';
 import { profile, publishedProjects } from '../features/portfolio/data';
-import { highlights, services, stages } from '../features/portfolio/company';
-import { catalogPath } from '../features/portfolio/routes';
+import { services } from '../features/portfolio/company';
+import { catalogPath, categories, projectPath, withBase } from '../features/portfolio/routes';
 import { telegramContact } from '../features/sharing/links';
 
 const projects = await publishedProjects();
-const featured = projects.filter((project) => project.featured);
-const selected = (featured.length ? featured : projects).slice(0, 5);
+const demos = projects.filter((project) => project.kind === 'demo' && project.demoUrl);
+const cases = projects.filter((project) => !demos.includes(project));
+const featured = cases.filter((project) => project.featured);
+const selected = (featured.length ? featured : cases.length ? cases : projects).slice(0, 4);
+// Три самые показательные цифры — по одной из первых кейсов с результатами.
+const stats = cases.filter((project) => project.results.length).slice(0, 3)
+  .map((project) => ({ ...project.results[0], href: projectPath(project.slug) }));
+const directions = [...new Set(services.map((service) => service.category))]
+  .filter((category) => projects.some((project) => project.categories.includes(category)));
 const headline = profile.headline ?? 'Автоматизация и ИИ для бизнеса';
 const contact = telegramContact(profile.telegramUsername);
 const lead = profile.bio?.split('. ')[0];
 ---
 <SiteLayout title={headline} description={profile.bio ?? 'Кейсы по автоматизации и внедрению ИИ.'} page="home">
-  <section class="hero">
-    {profile.availability === 'available' && <p class="hero-eyebrow">Берём новые проекты</p>}
-    <h1>{headline}</h1>
-    {lead && <p class="hero-description">{lead.endsWith('.') ? lead : lead + '.'}</p>}
-    <div class="actions">
-      {contact && <a class="button button-primary button-arrow" href={contact} data-telegram-contact>Обсудить проект</a>}
-      <a class="button button-secondary" href={catalogPath()}>Смотреть кейсы</a>
+  <section class="profile">
+    <img class="profile-mark" src={withBase('/portfolio-icon.png')} alt="" width="56" height="56" />
+    <div>
+      <p class="profile-name">
+        {profile.displayName ?? 'Anadept'}
+        {profile.availability === 'available' && <span class="status" title="Берём новые проекты"></span>}
+      </p>
+      <h1>{headline}</h1>
     </div>
-    <ul class="hero-checks">{highlights.map((item) => <li>{item}</li>)}</ul>
   </section>
+  {lead && <p class="profile-lead">{lead.endsWith('.') ? lead : lead + '.'}</p>}
 
-  <section class="section" aria-labelledby="home-projects">
-    <div class="section-head">
-      <h2 id="home-projects">Кейсы с цифрами</h2>
-      {selected.length > 0 && <a class="text-link" href={catalogPath()}>Все проекты</a>}
-      <p>Реальные проекты, типовые сценарии и интерактивные демо, которые можно открыть прямо здесь.</p>
+  {stats.length === 3 && <ul class="stats" aria-label="Результаты в цифрах">
+    {stats.map(({ value, label, href }) => <li><a class="stat" href={href}><strong>{value}</strong><span>{label}</span></a></li>)}
+  </ul>}
+
+  {demos.length > 0 && <section class="group" aria-labelledby="home-demos">
+    <div class="group-head"><h2 id="home-demos">Попробуйте сами</h2></div>
+    <ul class="demo-strip">
+      {demos.map((demo) => <li>
+        <a class="demo-tile" href={withBase(demo.demoUrl!)}>
+          {demo.cover && <Image src={demo.cover.image} alt="" widths={[320, 560]} sizes="17rem" />}
+          <span class="demo-tile-body"><strong>{demo.shortTitle ?? demo.title}</strong><span>Открыть</span></span>
+        </a>
+      </li>)}
+    </ul>
+    <p class="group-foot">Интерактивные демо работают прямо здесь, на тестовых данных.</p>
+  </section>}
+
+  <section class="group" aria-labelledby="home-projects">
+    <div class="group-head">
+      <h2 id="home-projects">Кейсы</h2>
+      {projects.length > selected.length && <a class="text-link" href={catalogPath()}>Все проекты</a>}
     </div>
     {selected.length
       ? <div class="project-grid">{selected.map((project) => <ProjectCard project={project} />)}</div>
       : <EmptyState title="Пока нет опубликованных проектов" heading="h3" />}
   </section>
 
-  <section class="section" aria-labelledby="home-services">
-    <div class="section-head">
-      <h2 id="home-services">Чем можем помочь</h2>
-      <p>Шесть направлений: от одной автоматизации до ИИ-ассистента внутри ваших систем.</p>
+  {directions.length > 0 && <section class="group" aria-labelledby="home-directions">
+    <div class="group-head"><h2 id="home-directions">Направления</h2></div>
+    <div class="chip-strip">
+      <ul class="filters">
+        {directions.map((category) => <li><a href={catalogPath(category)}>{categories[category]}</a></li>)}
+      </ul>
     </div>
-    <ul class="service-list">
-      {services.map((service, index) => <li>
-        <a class="service-link" href={catalogPath(service.category)}>
-          <span class="service-number" aria-hidden="true">{String(index + 1).padStart(2, '0')}</span>
-          <h3>{service.title}</h3>
-          <p>{service.text}</p>
-        </a>
-      </li>)}
-    </ul>
-  </section>
+  </section>}
 
-  <section class="section" aria-labelledby="home-stages">
-    <div class="section-head">
-      <h2 id="home-stages">Четыре этапа работы</h2>
-      <p>Каждый этап — отдельный договор и оплата. После любого можно остановиться.</p>
-    </div>
-    <ol class="steps">
-      {stages.map((stage) => <li>
-        <span class="step-term">{stage.term}</span>
-        <h3>{stage.title}</h3>
-        <p>{stage.text}</p>
-      </li>)}
-    </ol>
-  </section>
-
-  {contact && <section class="section cta-panel" aria-labelledby="home-cta">
-    <div>
-      <h2 id="home-cta">Обсудим вашу задачу?</h2>
-      <p>Опишите процесс своими словами — за неделю найдём, где теряются часы и деньги. Первая консультация бесплатно.</p>
-    </div>
-    <div class="actions">
-      <a class="button button-primary" href={contact} data-telegram-contact>Написать в Telegram</a>
-      {profile.email && <a class="button button-secondary" href={'mailto:' + profile.email}>{profile.email}</a>}
-    </div>
+  {contact && <section class="group web-only" aria-label="Связаться">
+    <a class="button button-primary button-block" href={contact} data-telegram-contact>Обсудить проект в Telegram</a>
+    <p class="group-foot">Первая консультация бесплатно.</p>
   </section>}
 </SiteLayout>

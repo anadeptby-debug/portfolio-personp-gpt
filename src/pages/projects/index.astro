@@ -7,12 +7,13 @@ import { publishedProjects } from '../../features/portfolio/data';
 import { catalogPath, categories, type Category } from '../../features/portfolio/routes';
 
 const projects = await publishedProjects();
-const filters = Object.keys(categories) as Category[];
+const filters = (Object.keys(categories) as Category[])
+  .filter((category) => projects.some((project) => project.categories.includes(category)));
 ---
-<SiteLayout title="Проекты" description="Каталог опубликованных проектов и подборки по направлениям." page="projects" canonicalPath={catalogPath()}>
+<SiteLayout title="Кейсы" description="Реальные проекты, типовые сценарии и интерактивные демо." page="projects" canonicalPath={catalogPath()}>
   <div class="page-heading">
-    <h1>Проекты</h1>
-    <p>Реальные проекты с цифрами до и после, типовые сценарии и интерактивные демо.</p>
+    <h1>Кейсы</h1>
+    <p>Реальные проекты, типовые сценарии и демо.</p>
   </div>
   <section class="catalog" aria-label="Каталог проектов" data-catalog>
     <nav aria-label="Категории проектов">

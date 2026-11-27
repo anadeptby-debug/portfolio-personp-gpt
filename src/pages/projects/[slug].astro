@@ -5,7 +5,7 @@ import SiteLayout from '../../layouts/SiteLayout.astro';
 import ProjectCard from '../../components/ProjectCard.astro';
 import Share from '../../components/Share.astro';
 import { publishedProjects, profile, relatedProjects, type Project } from '../../features/portfolio/data';
-import { catalogPath, categories, projectKinds, projectPath, projectVideoPath, withBase } from '../../features/portfolio/routes';
+import { catalogPath, projectKinds, projectPath, projectVideoPath, withBase } from '../../features/portfolio/routes';
 import { telegramContact } from '../../features/sharing/links';
 
 export const getStaticPaths = (async () => {
@@ -34,6 +34,7 @@ const contact = telegramContact(profile.telegramUsername);
 const video = project.video;
 const videoSrc = video && ('asset' in video ? projectVideoPath(project.slug, video.asset) : withBase(video.src));
 const demoHref = project.demoUrl && withBase(project.demoUrl);
+const [solutionLead = '', ...solutionRest] = project.solution.split(/\n\s*\n/).map((part) => part.trim()).filter(Boolean);
 const demoExternal = !!project.demoUrl && !project.demoUrl.startsWith('/');
 const videoPoster = video?.poster && !isAlias
   ? (await getImage({ src: video.poster, width: Math.min(video.poster.width, 1000), format: 'webp' })).src
@@ -53,85 +54,92 @@ const videoPoster = video?.poster && !isAlias
           <Share kind="case" value={project.slug} />
         </div>
         <header class="case-heading">
-          <span class:list={['kind-badge', 'kind-' + project.kind]}>{projectKinds[project.kind]}</span>
+          <span class:list={['kind', 'kind-' + project.kind]}>{projectKinds[project.kind]}</span>
           <h1>{project.title}</h1>
           {project.context && <p class="case-context">{project.context}</p>}
           <p class="lead">{project.summary}</p>
-          <ul class="filters case-categories" aria-label="Направления проекта">
-            {project.categories.map((category) => <li><a href={catalogPath(category)}>{categories[category]}</a></li>)}
-          </ul>
           {(project.demoUrl || project.repositoryUrl) && <div class="actions">
             {project.demoUrl && <a class="button button-primary button-arrow" href={demoHref} target={demoExternal ? '_blank' : undefined} rel={demoExternal ? 'noopener noreferrer' : undefined}>Открыть демо</a>}
             {project.repositoryUrl && <a class="button button-secondary" href={project.repositoryUrl} target="_blank" rel="noopener noreferrer">Исходный код</a>}
           </div>}
-          {(gallery.length > 0 || project.video) && <div class="actions">
-            {gallery.length > 0 && <a class="text-link" href="#case-gallery">К скриншотам</a>}
-            {project.video && <a class="text-link" href="#case-video">К видео</a>}
-          </div>}
         </header>
+
         {project.results.length > 0 && <section class="results-section" aria-labelledby="case-results">
           <h2 id="case-results" class="visually-hidden">Результаты</h2>
-          <dl class="metrics metrics-large">
-            {project.results.map(({ label, value }) => <div><dt>{label}</dt><dd>{value}</dd></div>)}
+          <dl class="stats">
+            {project.results.map(({ label, value }) => <div class="stat"><dt>{label}</dt><dd>{value}</dd></div>)}
           </dl>
         </section>}
+
         {project.cover && <div class="case-cover" data-media>
-          <Image src={project.cover.image} alt={project.cover.alt} widths={[480, 768, 1100, 1500]} sizes="(min-width: 76rem) 1184px, 96vw" loading="eager" fetchpriority="high" />
+          <Image src={project.cover.image} alt={project.cover.alt} widths={[480, 768, 1100]} sizes="(min-width: 46rem) 672px, 94vw" loading="eager" fetchpriority="high" />
         </div>}
+
         <div class="case-story">
-          <section aria-labelledby="case-problem">
-            <h2 id="case-problem">Задача</h2><p class="long-copy">{project.problem}</p>
+          <section class="group" aria-labelledby="case-problem">
+            <div class="group-head"><h2 id="case-problem">Задача</h2></div>
+            <div class="group-body"><p class="long-copy">{project.problem}</p></div>
           </section>
-          <section aria-labelledby="case-solution">
-            <h2 id="case-solution">Решение</h2><p class="long-copy">{project.solution}</p>
+
+          <section class="group" aria-labelledby="case-solution">
+            <div class="group-head"><h2 id="case-solution">Решение</h2></div>
+            <div class="group-body">
+              <p class="long-copy">{solutionLead}</p>
+              {solutionRest.length > 0 && <details class="more">
+                <summary>Подробнее</summary>
+                {solutionRest.map((paragraph) => <p class="long-copy">{paragraph}</p>)}
+              </details>}
+            </div>
           </section>
-          <section aria-labelledby="case-features">
-            <h2 id="case-features">Возможности</h2>
-            <ul class="feature-list">{project.features.map((feature) => <li>{feature}</li>)}</ul>
-          </section>
-          {project.comparison.length > 0 && <section aria-labelledby="case-compare">
-            <h2 id="case-compare">Было → стало</h2>
-            <ul class="compare">
-              {project.comparison.map(({ label, before, after }) => <li>
+
+          {project.comparison.length > 0 && <section class="group" aria-labelledby="case-compare">
+            <div class="group-head"><h2 id="case-compare">Было → стало</h2></div>
+            <ul class="cells">
+              {project.comparison.map(({ label, before, after }) => <li class="compare-cell">
                 <span class="compare-label">{label}</span>
                 <span class="compare-values">
-                  <span class="compare-before"><span>Было</span> {before}</span>
-                  <span class="compare-after"><span>Стало</span> {after}</span>
+                  <span class="compare-before">{before}</span>
+                  <span class="compare-arrow" aria-label="стало">→</span>
+                  <span class="compare-after">{after}</span>
                 </span>
               </li>)}
             </ul>
           </section>}
-          {project.fit && <section class="case-fit" aria-labelledby="case-fit">
-            <h2 id="case-fit">Кому подойдёт</h2>
-            <p>{project.fit}</p>
-          </section>}
-          {project.technologies.length > 0 && <section aria-labelledby="case-tech">
-            <h2 id="case-tech">На чём сделано</h2>
-            <ul class="tags">{project.technologies.map((technology) => <li>{technology}</li>)}</ul>
+
+          <section class="group" aria-labelledby="case-features">
+            <div class="group-head"><h2 id="case-features">Возможности</h2></div>
+            <ul class="cells">
+              {project.features.map((feature) => <li class="cell feature-cell"><span class="cell-body">{feature}</span></li>)}
+            </ul>
+          </section>
+
+          {project.fit && <section class="group" aria-labelledby="case-fit">
+            <div class="group-head"><h2 id="case-fit">Кому подойдёт</h2></div>
+            <div class="group-body"><p>{project.fit}</p></div>
           </section>}
         </div>
 
-        {gallery.length > 0 && <section class="section" aria-labelledby="case-gallery">
-          <div class="section-head"><h2 id="case-gallery">Скриншоты</h2></div>
+        {gallery.length > 0 && <section class="group" aria-labelledby="case-gallery">
+          <div class="group-head"><h2 id="case-gallery">Скриншоты</h2></div>
           <div class="gallery-grid">
             {gallery.map(({ image, alt, full }) => <figure>
               <a href={full.src} data-gallery-link aria-label={'Увеличить: ' + alt} data-alt={alt} data-media>
-                <Image src={image} alt={alt} widths={[360, 600, 900]} sizes="(min-width: 48rem) 45vw, 94vw" />
+                <Image src={image} alt={alt} widths={[360, 600]} sizes="18rem" />
               </a>
               <figcaption>{alt}</figcaption>
             </figure>)}
           </div>
           <dialog class="lightbox" aria-label="Просмотр скриншота" data-gallery-dialog>
             <div class="lightbox-content">
-              <button type="button" class="button button-secondary" data-gallery-close autofocus>Закрыть</button>
+              <button type="button" class="button button-secondary button-small" data-gallery-close autofocus>Закрыть</button>
               <img alt="" data-gallery-image hidden />
               <p class="notice" data-gallery-error hidden>Не удалось загрузить изображение.</p>
             </div>
           </dialog>
         </section>}
 
-        {video && videoSrc && <section class="section" aria-labelledby="case-video">
-          <div class="section-head"><h2 id="case-video">Видео работы</h2></div>
+        {video && videoSrc && <section class="group" aria-labelledby="case-video">
+          <div class="group-head"><h2 id="case-video">Видео работы</h2></div>
           <div class:list={['case-video', { 'case-video-portrait': video.orientation === 'portrait' }]} data-media>
             <video controls playsinline preload="none" poster={videoPoster} data-video-src={videoSrc} aria-label="Видео работы проекта" hidden>
               {video.captions && <track kind="captions" src={withBase(video.captions)} srclang="ru" label="Русский" />}
@@ -141,18 +149,22 @@ const videoPoster = video?.poster && !isAlias
           </div>
         </section>}
 
-        {contact && <div class="case-contact cta-panel">
-          <div>
-            <h2>Нужно так же?</h2>
-            <p>Покажите нам свой процесс — за неделю найдём, где теряются часы и деньги.</p>
-          </div>
-          <div class="actions">
-            <a class="button button-primary" href={contact} data-telegram-contact>Обсудить похожий проект</a>
-          </div>
-        </div>}
+        {project.technologies.length > 0 && <section class="group" aria-labelledby="case-tech">
+          <div class="group-head"><h2 id="case-tech">На чём сделано</h2></div>
+          <ul class="tags">{project.technologies.map((technology) => <li>{technology}</li>)}</ul>
+        </section>}
+
+        {contact && <section class="group case-contact" aria-label="Связаться">
+          <ul class="cells">
+            <li><a class="cell" href={contact} data-telegram-contact>
+              <span class="cell-icon" aria-hidden="true">✈</span>
+              <span class="cell-body"><span class="cell-title">Обсудить похожий проект</span><span class="cell-sub">Ответим в Telegram</span></span>
+            </a></li>
+          </ul>
+        </section>}
       </article>
-      {related.length > 0 && <section class="section" aria-labelledby="case-related">
-        <div class="section-head"><h2 id="case-related">Похожие проекты</h2></div>
+      {related.length > 0 && <section class="group" aria-labelledby="case-related">
+        <div class="group-head"><h2 id="case-related">Похожие проекты</h2></div>
         <div class="project-grid">{related.map((entry) => <ProjectCard project={entry} />)}</div>
       </section>}
     </SiteLayout>}

@@ -8,26 +8,20 @@ interface Props {
   heading?: 'h2' | 'h3';
 }
 const { project, heading: Heading = 'h3' } = Astro.props;
-const metrics = project.results.slice(0, 3);
+const metric = project.results[0];
 ---
 <article class="project-card" data-project-card data-categories={project.categories.join(' ')}>
   <a class="card-link" href={projectPath(project.slug)}>
-    {project.cover && <div class="card-media" data-media>
-      <Image src={project.cover.image} alt={project.cover.alt} widths={[320, 480, 680, 960]} sizes="(min-width: 68rem) 380px, (min-width: 48rem) 46vw, 94vw" />
-    </div>}
     <div class="card-body">
-      <span class:list={['kind-badge', 'kind-' + project.kind]}>{projectKinds[project.kind]}</span>
-      <Heading>{project.title}</Heading>
-      {project.context && <span class="card-context">{project.context}</span>}
-      <p>{project.summary}</p>
-      {metrics.length > 0
-        ? <dl class="metrics" aria-label="Результаты">
-            {metrics.map(({ label, value }) => <div><dt>{label}</dt><dd>{value}</dd></div>)}
-          </dl>
-        : <ul class="tags" aria-label="Теги проекта">
-            {project.tags.map((tag) => <li>{tag}</li>)}
-          </ul>}
-      <span class="card-more" aria-hidden="true">Подробнее</span>
+      <span class:list={['kind', 'kind-' + project.kind]}>{projectKinds[project.kind]}</span>
+      <Heading>{project.shortTitle ?? project.title}</Heading>
+      <p class="card-summary">{project.summary}</p>
+      {metric && <p class="card-metric"><strong>{metric.value}</strong> {metric.label}</p>}
     </div>
+    {project.cover
+      ? <div class="card-thumb" data-media>
+          <Image src={project.cover.image} alt="" widths={[144, 216]} sizes="72px" />
+        </div>
+      : <span class="card-chevron" aria-hidden="true"></span>}
   </a>
 </article>

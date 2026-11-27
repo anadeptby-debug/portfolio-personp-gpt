@@ -27,7 +27,7 @@ const imageUrl = Astro.site ? new URL(openGraphImage.src, Astro.site).href : und
 const contact = telegramContact(profile.telegramUsername);
 const navigation = [
   { key: 'home', href: withBase('/'), label: 'Главная' },
-  { key: 'projects', href: catalogPath(), label: 'Проекты' },
+  { key: 'projects', href: catalogPath(), label: 'Кейсы' },
   { key: 'about', href: withBase('/about'), label: 'О нас' },
 ] as const;
 ---
@@ -73,7 +73,7 @@ const navigation = [
             </a>
           ))}
         </nav>
-        {contact && <a class="button button-small button-dark header-contact" href={contact} data-telegram-contact>Обсудить проект</a>}
+        {contact && <a class="button button-small button-primary header-contact" href={contact} data-telegram-contact>Обсудить проект</a>}
       </div>
     </header>
     <main class="container site-main" id="main-content" tabindex="-1">

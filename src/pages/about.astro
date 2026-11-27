@@ -11,49 +11,64 @@ const hasProfile = profile.displayName || profile.avatar || profile.bio || profi
 const hasContacts = telegram || profile.githubUrl || profile.email;
 ---
 <SiteLayout title="О нас" description={profile.bio ?? 'Команда, подход и контакты.'} page="about">
-  <div class="page-heading">
-    <h1>О нас</h1>
-    <p>Не продаём «ИИ ради ИИ»: берём процесс, считаем его стоимость и отвечаем за результат.</p>
-  </div>
   {hasProfile
-    ? <section class="profile-panel" aria-label="Профиль">
-        {profile.avatar && <img class="profile-avatar" src={withBase(profile.avatar)} alt={profile.displayName ?? 'Логотип'} width="96" height="96" />}
+    ? <section class="about-card" aria-label="Профиль">
+        <img class="profile-mark" src={profile.avatar ? withBase(profile.avatar) : withBase('/portfolio-icon.png')} alt="" width="72" height="72" />
+        <h1>{profile.displayName ?? 'О нас'}</h1>
+        {profile.headline && <p>{profile.headline}</p>}
         {profile.availability === 'available' && <p class="availability"><span></span>Берём новые проекты</p>}
-        {profile.headline && <p class="lead">{profile.headline}</p>}
-        {profile.bio && <p class="long-copy">{profile.bio}</p>}
-        {profile.competencies.length > 0 && <ul class="tags" aria-label="Компетенции">
-          {profile.competencies.map((skill) => <li>{skill}</li>)}
-        </ul>}
       </section>
-    : <EmptyState title="Профиль пока не заполнен" href={catalogPath()} linkLabel="Смотреть проекты" />}
+    : <>
+        <div class="page-heading"><h1>О нас</h1></div>
+        <EmptyState title="Профиль пока не заполнен" href={catalogPath()} linkLabel="Смотреть проекты" />
+      </>}
 
-  <section class="section" aria-labelledby="about-principles">
-    <div class="section-head"><h2 id="about-principles">Наши принципы</h2></div>
-    <ol class="steps steps-3">
-      {principles.map((item) => <li><h3>{item.title}</h3><p>{item.text}</p></li>)}
-    </ol>
-  </section>
+  {profile.bio && <section class="group" aria-labelledby="about-bio">
+    <div class="group-head"><h2 id="about-bio">О компании</h2></div>
+    <div class="group-body"><p class="long-copy">{profile.bio}</p></div>
+  </section>}
 
-  <section class="section" aria-labelledby="about-stages">
-    <div class="section-head">
-      <h2 id="about-stages">Как мы работаем</h2>
-      <p>Каждый этап — отдельный договор и оплата. После любого можно остановиться.</p>
-    </div>
-    <ol class="steps">
-      {stages.map((stage) => <li>
-        <span class="step-term">{stage.term}</span>
-        <h3>{stage.title}</h3>
-        <p>{stage.text}</p>
+  {hasContacts && <section class="group" aria-labelledby="about-contacts">
+    <div class="group-head"><h2 id="about-contacts">Связаться</h2></div>
+    <ul class="cells">
+      {telegram && <li><a class="cell" href={telegram} data-telegram-contact>
+        <span class="cell-icon" aria-hidden="true">✈</span>
+        <span class="cell-body"><span class="cell-title">Написать в Telegram</span><span class="cell-sub">@{profile.telegramUsername}</span></span>
+      </a></li>}
+      {profile.email && <li><a class="cell" href={'mailto:' + profile.email}>
+        <span class="cell-icon cell-icon-muted" aria-hidden="true">@</span>
+        <span class="cell-body"><span class="cell-title">Почта</span><span class="cell-sub">{profile.email}</span></span>
+      </a></li>}
+      {profile.githubUrl && <li><a class="cell" href={profile.githubUrl}>
+        <span class="cell-icon cell-icon-muted" aria-hidden="true">GH</span>
+        <span class="cell-body"><span class="cell-title">GitHub</span></span>
+      </a></li>}
+    </ul>
+  </section>}
+
+  <section class="group" aria-labelledby="about-stages">
+    <div class="group-head"><h2 id="about-stages">Как мы работаем</h2></div>
+    <ol class="cells">
+      {stages.map((stage, index) => <li class="cell">
+        <span class="cell-icon cell-icon-muted" aria-hidden="true">{index + 1}</span>
+        <span class="cell-body"><span class="cell-title">{stage.title}</span><span class="cell-sub">{stage.text}</span></span>
+        <span class="cell-value">{stage.term}</span>
       </li>)}
     </ol>
+    <p class="group-foot">Каждый этап — отдельный договор. После любого можно остановиться.</p>
   </section>
 
-  {hasContacts && <section class="section" aria-labelledby="about-contacts">
-    <div class="section-head"><h2 id="about-contacts">Контакты</h2></div>
-    <div class="contact-list">
-      {telegram && <a class="button button-primary" href={telegram} data-telegram-contact>Написать в Telegram</a>}
-      {profile.email && <a class="button button-secondary" href={'mailto:' + profile.email}>{profile.email}</a>}
-      {profile.githubUrl && <a class="button button-secondary" href={profile.githubUrl}>GitHub</a>}
-    </div>
+  <section class="group" aria-labelledby="about-principles">
+    <div class="group-head"><h2 id="about-principles">Принципы</h2></div>
+    <ul class="cells">
+      {principles.map((item) => <li class="cell feature-cell">
+        <span class="cell-body"><span class="cell-title">{item.title}</span><span class="cell-sub">{item.text}</span></span>
+      </li>)}
+    </ul>
+  </section>
+
+  {profile.competencies.length > 0 && <section class="group" aria-labelledby="about-skills">
+    <div class="group-head"><h2 id="about-skills">С чем работаем</h2></div>
+    <ul class="tags" aria-label="Компетенции">{profile.competencies.map((skill) => <li>{skill}</li>)}</ul>
   </section>}
 </SiteLayout>

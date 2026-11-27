@@ -159,7 +159,7 @@ test('Telegram starts the case once, applies theme and insets, then opens person
   await page.getByRole('link', { name: 'Обсудить похожий проект' }).click();
   await expect(page.locator('html')).toHaveAttribute('data-contact-opened', 'https://t.me/fixture_contact');
   await page.evaluate(() => window.dispatchEvent(new Event('fixture:back')));
-  await expect(page.getByRole('heading', { name: 'Проекты', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Кейсы', exact: true })).toBeVisible();
   await page.getByRole('navigation', { name: 'Основная навигация' }).getByRole('link', { name: 'Главная' }).click();
   await expect(page.getByRole('heading', { name: 'Проверка интерфейса портфолио' })).toBeVisible();
 });
@@ -183,7 +183,7 @@ test('older Telegram keeps screen navigation and applies supported presentation'
   await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
   expect(await page.locator('html').getAttribute('data-native-back')).toBeNull();
   await page.getByRole('link', { name: 'Все проекты' }).click();
-  await expect(page.getByRole('heading', { name: 'Проекты', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { name: 'Кейсы', exact: true })).toBeVisible();
 });
 
 test('page layout stays in bounds from 320px to desktop', async ({ page }) => {
