@@ -1,0 +1,13 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import { publishedProjects } from '../features/portfolio/data';
+
+const projects = (await publishedProjects()).map(({ slug, aliases }) => ({ slug, aliases }));
+---
+<SiteLayout title="Открываем портфолио" description="Вход в портфолио из Telegram." page="telegram" noindex>
+  <div class="page-heading">
+    <h1>Открываем портфолио</h1>
+    <a class="button button-secondary" href="/">На главную</a>
+  </div>
+  <div data-telegram-launch data-projects={JSON.stringify(projects)} hidden></div>
+</SiteLayout>

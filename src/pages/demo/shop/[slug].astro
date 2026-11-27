@@ -1,0 +1,35 @@
+---
+import { Image } from 'astro:assets';
+import type { GetStaticPaths } from 'astro';
+import ShopLayout from '../../../layouts/ShopLayout.astro';
+import { cartPath, departments, priceLabel, products, shopPath, type Product } from '../../../features/shop/catalog';
+import { pictures } from '../../../features/shop/media';
+
+export const getStaticPaths = (() => products.map((product) => ({
+  params: { slug: product.id },
+  props: { product },
+}))) satisfies GetStaticPaths;
+
+interface Props { product: Product }
+const { product } = Astro.props;
+---
+<ShopLayout title={product.name} description={product.description}>
+  <a class="back-link" href={shopPath + '#catalog'}>К каталогу</a>
+  <article class="product-detail">
+    <Image class="detail-image" src={pictures[product.id]} alt={product.alt} widths={[480, 700, 1000]} sizes="(min-width: 56rem) 53vw, 95vw" loading="eager" fetchpriority="high" />
+    <div class="detail-copy">
+      <p class="product-department">{departments[product.department]}</p>
+      <h1>{product.name}</h1>
+      <p class="lead">{product.description}</p>
+      <p class="detail-price">{priceLabel(product.price)}</p>
+      <div class="detail-actions">
+        <button class="shop-button primary" data-add-product={product.id} type="button">Добавить в корзину</button>
+        <a class="shop-button secondary" href={cartPath}>Открыть корзину</a>
+      </div>
+      <section class="detail-specs" aria-labelledby="specifications">
+        <h2 id="specifications">Характеристики</h2>
+        <dl>{product.details.map(([label, value]) => <div><dt>{label}</dt><dd>{value}</dd></div>)}</dl>
+      </section>
+    </div>
+  </article>
+</ShopLayout>

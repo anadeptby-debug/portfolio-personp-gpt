@@ -1,0 +1,11 @@
+{
+  "displayName": "Тестовый профиль",
+  "headline": "Проверка интерфейса портфолио",
+  "bio": "Техническая фикстура для автоматических проверок.",
+  "avatar": null,
+  "availability": "hidden",
+  "telegramUsername": "fixture_contact",
+  "githubUrl": null,
+  "email": null,
+  "competencies": []
+}

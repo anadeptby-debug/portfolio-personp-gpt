@@ -1,0 +1,8 @@
+---
+import SiteLayout from '../layouts/SiteLayout.astro';
+import EmptyState from '../components/EmptyState.astro';
+---
+<SiteLayout title="Страница недоступна" description="Страница не найдена." page="not_found" noindex>
+  <div class="page-heading"><h1>Страница недоступна</h1></div>
+  <EmptyState title="Возможно, адрес изменился" description="Все доступные работы собраны в каталоге." href="/projects" linkLabel="К проектам" />
+</SiteLayout>

@@ -1,0 +1,28 @@
+---
+import { Image } from 'astro:assets';
+import type { Project } from '../features/portfolio/data';
+import { projectKinds, projectPath } from '../features/portfolio/routes';
+
+interface Props {
+  project: Project;
+  heading?: 'h2' | 'h3';
+}
+const { project, heading: Heading = 'h3' } = Astro.props;
+---
+<article class="project-card" data-project-card data-categories={project.categories.join(' ')}>
+  <a class="card-link" href={projectPath(project.slug)}>
+    <div class="card-media" data-media>
+      {project.cover
+        ? <Image src={project.cover.image} alt={project.cover.alt} widths={[320, 480, 680, 960]} sizes="(min-width: 68rem) 380px, (min-width: 48rem) 46vw, 94vw" />
+        : <span class="media-placeholder" aria-hidden="true"></span>}
+    </div>
+    <div class="card-body">
+      <span class="project-kind">{projectKinds[project.kind]}</span>
+      <Heading>{project.title}</Heading>
+      <p>{project.summary}</p>
+      <ul class="tags" aria-label="Теги проекта">
+        {project.tags.map((tag) => <li>{tag}</li>)}
+      </ul>
+    </div>
+  </a>
+</article>

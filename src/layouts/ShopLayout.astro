@@ -1,0 +1,48 @@
+---
+import '@fontsource-variable/inter';
+import '../styles/shop.css';
+import { shopPath, cartPath } from '../features/shop/catalog';
+
+interface Props {
+  title: string;
+  description: string;
+  current?: 'catalog' | 'cart';
+}
+const { title, description, current } = Astro.props;
+---
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="description" content={description} />
+    <meta name="robots" content="noindex" />
+    <title>{title} · Рабочая полка</title>
+  </head>
+  <body>
+    <a class="skip" href="#main-content">К содержанию</a>
+    <header class="shop-header">
+      <div class="shell bar">
+        <a href={shopPath} class="wordmark"><span class="shop-symbol" aria-hidden="true"></span>Рабочая полка</a>
+        <nav class="navigation" aria-label="Навигация магазина">
+          <a href={shopPath + '#catalog'} aria-current={current === 'catalog' ? 'location' : undefined}>Каталог</a>
+          <a href={cartPath} class="basket-link" aria-current={current === 'cart' ? 'page' : undefined}>Корзина <span data-cart-count>0</span></a>
+        </nav>
+      </div>
+    </header>
+    <main id="main-content" class="shell">
+      <slot />
+    </main>
+    <footer class="shop-footer">
+      <div class="shell bar">
+        <p>Демо-магазин. Цены и товары иллюстративные.</p>
+        <a href="/projects/desk_shop">К кейсу портфолио</a>
+      </div>
+    </footer>
+    <div class="sr-only" role="status" aria-live="polite" data-shop-announce></div>
+    <p class="shop-feedback" data-shop-feedback aria-hidden="true" hidden></p>
+    <script>
+      import '../features/shop/client';
+    </script>
+  </body>
+</html>

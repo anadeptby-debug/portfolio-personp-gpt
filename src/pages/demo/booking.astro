@@ -1,0 +1,103 @@
+---
+import '@fontsource-variable/inter';
+import '../../styles/booking.css';
+import { services } from '../../features/booking/model';
+---
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+    <meta name="robots" content="noindex" />
+    <meta name="description" content="Демонстрация онлайн-записи в веломастерскую." />
+    <title>Запись в веломастерскую · Демо</title>
+    <link rel="icon" href="/portfolio-icon.png" type="image/png" />
+  </head>
+  <body>
+    <a class="skip" href="#content">К содержанию</a>
+    <header class="booking-header">
+      <div class="frame topbar">
+        <div class="wordmark">
+          <span class="wheel" aria-hidden="true"></span>
+          Веломастерская
+        </div>
+        <nav class="tabs" aria-label="Разделы демо">
+          <button type="button" data-view="booking" aria-pressed="true">Запись</button>
+          <button type="button" data-view="manage" aria-pressed="false">Панель записей</button>
+        </nav>
+      </div>
+    </header>
+    <main id="content" class="frame">
+      <section data-screen="booking" aria-labelledby="booking-title">
+        <header class="intro">
+          <span class="demo-label">Демо</span>
+          <h1 id="booking-title" tabindex="-1">Онлайн-запись<br />в мастерскую</h1>
+          <p>Выберите услугу и удобное время. Запись сохранится в этом браузере.</p>
+        </header>
+        <noscript><p class="note">Включите JavaScript, чтобы выбрать время и подтвердить запись.</p></noscript>
+        <div class="workspace">
+          <div class="flow">
+            <section class="surface" aria-labelledby="service-title">
+              <h2 id="service-title">Услуга</h2>
+              <div class="services" role="group" aria-label="Услуги">
+                {Object.entries(services).map(([id, service], index) => (
+                  <button type="button" class="service" data-service={id} aria-pressed={index === 0 ? 'true' : 'false'}>
+                    <span class="radio-mark" aria-hidden="true"></span>
+                    <span><strong>{service.name}</strong><span class="service-description">{service.description}</span></span>
+                    <span class="duration">{service.duration} мин</span>
+                  </button>
+                ))}
+              </div>
+            </section>
+            <section class="surface" aria-labelledby="schedule-title">
+              <h2 id="schedule-title">Дата и время</h2>
+              <div class="days" role="group" aria-label="Даты" data-days></div>
+              <div class="slot-heading">
+                <h3>Время начала</h3>
+                <span class="secondary">Местное время</span>
+              </div>
+              <div class="slots" role="group" aria-label="Время начала" data-slots></div>
+            </section>
+          </div>
+          <aside class="surface summary" aria-labelledby="summary-title">
+            <h2 id="summary-title">Ваша запись</h2>
+            <dl class="summary-details">
+              <div><dt>Услуга</dt><dd data-summary-service>Диагностика</dd></div>
+              <div><dt>Дата</dt><dd data-summary-date>—</dd></div>
+              <div><dt>Время</dt><dd data-summary-time>Выберите время</dd></div>
+              <div><dt>Длительность</dt><dd data-summary-duration>30 мин</dd></div>
+            </dl>
+            <button class="primary" data-confirm type="button" disabled>Подтвердить запись</button>
+            <p class="summary-hint">Контактные данные для демо не нужны.</p>
+            <p class="note" data-notice role="status" hidden></p>
+            <button class="subtle" data-open-panel type="button" hidden>Перейти к записям</button>
+          </aside>
+        </div>
+      </section>
+      <section data-screen="manage" aria-labelledby="manage-title" hidden>
+        <header class="intro">
+          <span class="demo-label">Демо</span>
+          <h1 id="manage-title" tabindex="-1">Панель записей</h1>
+          <p>Подтверждайте доступность слотов по журналу записей и отмен.</p>
+        </header>
+        <div class="workspace management">
+          <section class="surface" aria-labelledby="bookings-title">
+            <h2 id="bookings-title">Записи</h2>
+            <p class="empty" data-empty-bookings>Записей пока нет. Они появятся после подтверждения времени.</p>
+            <ul class="records" data-bookings></ul>
+          </section>
+          <section class="surface" aria-labelledby="events-title">
+            <h2 id="events-title">Уведомления в демо</h2>
+            <p class="empty" data-empty-events>Здесь появятся подтверждения и отмены.</p>
+            <ul class="events" data-events></ul>
+          </section>
+        </div>
+        <p class="panel-status" data-panel-status role="status"></p>
+      </section>
+    </main>
+    <footer class="frame footer"><a href="/projects/online_booking">К кейсу портфолио</a></footer>
+    <script>
+      import '../../features/booking/client';
+    </script>
+  </body>
+</html>

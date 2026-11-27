@@ -1,0 +1,9 @@
+node_modules/
+dist/
+dist-fixtures/
+.astro/
+.npm-cache/
+.env*
+!.env.example
+playwright-report/
+test-results/

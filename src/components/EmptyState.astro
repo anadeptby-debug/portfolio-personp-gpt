@@ -1,0 +1,18 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+  href?: string;
+  linkLabel?: string;
+  heading?: 'h2' | 'h3';
+}
+const { title, description, href, linkLabel, heading: Heading = 'h2' } = Astro.props;
+---
+<div class="empty-state">
+  <span class="empty-icon" aria-hidden="true"></span>
+  <div>
+    <Heading>{title}</Heading>
+    {description && <p>{description}</p>}
+    {href && linkLabel && <a class="button button-secondary" href={href}>{linkLabel}</a>}
+  </div>
+</div>

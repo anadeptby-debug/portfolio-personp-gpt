@@ -1,0 +1,24 @@
+---
+interface Props {
+  kind: 'case' | 'category';
+  value?: string;
+}
+const { kind, value } = Astro.props;
+---
+<details class="share" data-share data-kind={kind} data-value={value} hidden={kind === 'category'}>
+  <summary class="button button-secondary">
+    <span class="share-icon" aria-hidden="true"></span>
+    Поделиться
+  </summary>
+  <div class="share-panel">
+    <div class="share-actions">
+      <button type="button" class="button button-secondary" data-copy="web">Копировать веб-ссылку</button>
+      <button type="button" class="button button-secondary" data-copy="telegram" hidden>Копировать Telegram-ссылку</button>
+    </div>
+    <p class="share-status" role="status" data-share-status></p>
+    <label class="copy-fallback" data-copy-fallback hidden>
+      Ссылка для ручного копирования
+      <input type="url" readonly spellcheck="false" />
+    </label>
+  </div>
+</details>

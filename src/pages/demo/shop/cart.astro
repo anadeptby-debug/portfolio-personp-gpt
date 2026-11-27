@@ -1,0 +1,50 @@
+---
+import { Image } from 'astro:assets';
+import ShopLayout from '../../../layouts/ShopLayout.astro';
+import { priceLabel, productPath, products, shopPath } from '../../../features/shop/catalog';
+import { pictures } from '../../../features/shop/media';
+---
+<ShopLayout title="Корзина" description="Корзина демонстрационного магазина." current="cart">
+  <header class="cart-heading">
+    <a class="back-link" href={shopPath + '#catalog'}>К каталогу</a>
+    <h1>Корзина</h1>
+  </header>
+  <section class="empty-state" data-cart-empty>
+    <h2>Корзина пуста</h2>
+    <p>Добавьте товары из каталога.</p>
+    <a class="shop-button primary" href={shopPath + '#catalog'}>Смотреть каталог</a>
+  </section>
+  <section class="empty-state confirmation" aria-labelledby="order-confirmed" data-cart-confirmed hidden>
+    <h2 id="order-confirmed" tabindex="-1">Демо-заказ оформлен</h2>
+    <p data-order-total></p>
+    <a class="shop-button primary" href={shopPath + '#catalog'}>Вернуться в каталог</a>
+  </section>
+  <div class="cart-layout" data-cart-layout hidden>
+    <ul class="cart-lines" aria-label="Товары в корзине">
+      {products.map((product) => <li class="cart-line" data-cart-line={product.id} hidden>
+        <a class="cart-image" href={productPath(product.id)} aria-label={'Открыть: ' + product.name}>
+          <Image src={pictures[product.id]} alt={product.alt} width={144} />
+        </a>
+        <div class="cart-info">
+          <h2><a href={productPath(product.id)}>{product.name}</a></h2>
+          <p class="product-finish">{priceLabel(product.price)} за шт.</p>
+          <div class="quantity" role="group" aria-label={'Количество: ' + product.name}>
+            <button type="button" data-cart-adjust="-1" aria-label={'Уменьшить количество: ' + product.name}>−</button>
+            <output data-cart-quantity>1</output>
+            <button type="button" data-cart-adjust="1" aria-label={'Увеличить количество: ' + product.name}>+</button>
+          </div>
+        </div>
+        <div class="cart-line-aside">
+          <strong data-cart-subtotal>{priceLabel(product.price)}</strong>
+          <button type="button" class="remove" data-cart-adjust="0" aria-label={'Удалить: ' + product.name}>Удалить</button>
+        </div>
+      </li>)}
+    </ul>
+    <aside class="cart-summary" aria-labelledby="total-title">
+      <h2 id="total-title">Итого</h2>
+      <div class="total"><span>Стоимость товаров</span><strong data-cart-total>0 BYN</strong></div>
+      <button type="button" class="shop-button primary" data-cart-checkout>Оформить демо-заказ</button>
+      <p class="fine">Оформление учебное, оплата и контакты не требуются.</p>
+    </aside>
+  </div>
+</ShopLayout>

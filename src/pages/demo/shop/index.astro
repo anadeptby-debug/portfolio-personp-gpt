@@ -1,0 +1,51 @@
+---
+import { Image } from 'astro:assets';
+import ShopLayout from '../../../layouts/ShopLayout.astro';
+import { departments, priceLabel, productPath, products } from '../../../features/shop/catalog';
+import { pictures } from '../../../features/shop/media';
+---
+<ShopLayout title="Каталог" description="Демонстрационный магазин настольных аксессуаров." current="catalog">
+  <section class="shop-hero" aria-labelledby="shop-title">
+    <div class="hero-copy">
+      <p class="demo-tag">Демо-магазин</p>
+      <h1 id="shop-title">Порядок на рабочем столе</h1>
+      <p class="lead">Свет, подставки и текстиль для удобного рабочего места.</p>
+      <a class="shop-button primary" href="#catalog">Смотреть каталог</a>
+    </div>
+    <Image class="hero-image" src={pictures['desk-lamp']} alt={products[0].alt} widths={[500, 760, 1040, 1360]} sizes="(min-width: 56rem) 54vw, 96vw" loading="eager" fetchpriority="high" />
+  </section>
+  <section id="catalog" class="shop-catalog" aria-labelledby="catalog-title">
+    <div class="catalog-top">
+      <h2 id="catalog-title">Каталог</h2>
+      <label class="search-label">
+        <span class="sr-only">Поиск по товарам</span>
+        <input type="search" placeholder="Поиск по товарам" autocomplete="off" maxlength="80" data-shop-search />
+      </label>
+    </div>
+    <div class="shop-filters" role="group" aria-label="Категории товаров">
+      <button type="button" data-shop-category="" aria-pressed="true">Все товары</button>
+      {Object.entries(departments).map(([key, label]) => <button type="button" data-shop-category={key} aria-pressed="false">{label}</button>)}
+    </div>
+    <div class="shop-grid" data-shop-grid>
+      {products.map((product) => <article class="shop-card" data-shop-product={product.id}>
+        <a class="card-image" href={productPath(product.id)} aria-label={'Открыть: ' + product.name}>
+          <Image src={pictures[product.id]} alt={product.alt} widths={[340, 500, 760]} sizes="(min-width: 64rem) 380px, (min-width: 40rem) 46vw, 94vw" />
+        </a>
+        <div class="card-body">
+          <p class="product-department">{departments[product.department]}</p>
+          <h3><a href={productPath(product.id)}>{product.name}</a></h3>
+          <p class="product-finish">{product.finish}</p>
+          <div class="card-bottom">
+            <strong>{priceLabel(product.price)}</strong>
+            <button class="shop-button secondary" data-add-product={product.id} type="button" aria-label={'В корзину: ' + product.name}>В корзину</button>
+          </div>
+        </div>
+      </article>)}
+    </div>
+    <div class="empty-state" data-shop-empty hidden>
+      <h3>Товары не найдены</h3>
+      <p>Попробуйте другой запрос или категорию.</p>
+      <button type="button" class="shop-button secondary" data-shop-clear>Сбросить фильтры</button>
+    </div>
+  </section>
+</ShopLayout>
